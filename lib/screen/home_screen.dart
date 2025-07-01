@@ -69,7 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
       try {
         recipes = await AIService.generateRecipes(_ingredients);
       } catch (e) {
-        // Fallback to sample recipes if AI service fails
         recipes = await AIService.generateSampleRecipes(_ingredients);
       }
 
