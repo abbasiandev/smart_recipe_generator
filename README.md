@@ -1,16 +1,30 @@
-# smart_recipe_generator
+# Smart Recipe Generator 🍳
 
-A new Flutter project.
+An AI-powered Flutter app that generates personalized recipes based on your available ingredients. Perfect for discovering new meals with what you have at home!
+
+## Features
+
+- **Ingredient Management**: Add and manage your available ingredients
+- **AI Recipe Generation**: Get creative recipes using OpenAI's GPT
+- **Beautiful UI**: Modern Material Design 3 interface
+- **Recipe Details**: Step-by-step instructions with progress tracking
+- **Offline Support**: Fallback sample recipes when AI is unavailable
+- **Recipe Sharing**: Copy and share recipes easily
+
+## Screenshots
+
+[Add screenshots here]
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter 3.10.0 or higher
+- OpenAI API key (optional - app works with sample recipes without it)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/smart-recipe-generator.git
+cd smart-recipe-generator
