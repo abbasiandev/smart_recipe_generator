@@ -26,5 +26,5 @@ An AI-powered Flutter app that generates personalized recipes based on your avai
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/smart-recipe-generator.git
+git clone https://github.com/abbasiandev/smart_recipe_generator
 cd smart-recipe-generator
