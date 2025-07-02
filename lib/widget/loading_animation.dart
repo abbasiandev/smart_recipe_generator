@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
@@ -37,7 +38,7 @@ class LoadingAnimation extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          Text(
+          AutoSizeText(
             message,
             style: AppConstants.titleStyle,
             textAlign: TextAlign.center,
