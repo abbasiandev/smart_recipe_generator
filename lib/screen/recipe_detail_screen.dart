@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -42,7 +43,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
             backgroundColor: AppConstants.primaryColor,
             iconTheme: const IconThemeData(color: Colors.white),
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(
+              title: AutoSizeText(
                 widget.recipe.title,
                 style: AppConstants.titleStyle.copyWith(
                   color: Colors.white,
@@ -67,8 +68,8 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 60), // Space for title
-                        Text(
+                        const SizedBox(height: 60),
+                        AutoSizeText(
                           widget.recipe.description,
                           style: AppConstants.bodyStyle.copyWith(
                             color: Colors.white70,
@@ -100,7 +101,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                                   AppConstants.borderRadiusSmall,
                                 ),
                               ),
-                              child: Text(
+                              child: AutoSizeText(
                                 widget.recipe.difficulty,
                                 style: AppConstants.captionStyle.copyWith(
                                   color: Colors.white,
@@ -188,7 +189,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
           color: Colors.white70,
         ),
         const SizedBox(width: 4),
-        Text(
+        AutoSizeText(
           label,
           style: AppConstants.captionStyle.copyWith(
             color: Colors.white70,
@@ -208,14 +209,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              AutoSizeText(
                 'Ingredients',
                 style: AppConstants.titleStyle,
               ),
               TextButton.icon(
                 onPressed: _copyIngredients,
                 icon: const Icon(Icons.copy, size: 16),
-                label: const Text('Copy'),
+                label: const AutoSizeText('Copy'),
                 style: TextButton.styleFrom(
                   foregroundColor: AppConstants.primaryColor,
                 ),
@@ -253,7 +254,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
+                        child: AutoSizeText(
                           ingredient,
                           style: AppConstants.bodyStyle,
                         ),
@@ -278,11 +279,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              AutoSizeText(
                 'Instructions',
                 style: AppConstants.titleStyle,
               ),
-              Text(
+              AutoSizeText(
                 '${_completedSteps.where((step) => step).length}/${widget.recipe.instructions.length}',
                 style: AppConstants.captionStyle.copyWith(
                   color: AppConstants.primaryColor,
@@ -333,7 +334,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                               color: Colors.white,
                               size: 20,
                             )
-                                : Text(
+                                : AutoSizeText(
                               '${index + 1}',
                               style: AppConstants.captionStyle.copyWith(
                                 fontWeight: FontWeight.w600,
@@ -360,7 +361,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
                               width: 1,
                             ),
                           ),
-                          child: Text(
+                          child: AutoSizeText(
                             instruction,
                             style: AppConstants.bodyStyle.copyWith(
                               decoration: isCompleted
@@ -393,7 +394,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen>
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Ingredients copied to clipboard!'),
+        content: const AutoSizeText('Ingredients copied to clipboard!'),
         backgroundColor: AppConstants.secondaryColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -426,7 +427,7 @@ Generated by Smart Recipe Generator
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Recipe copied to clipboard for sharing!'),
+        content: const AutoSizeText('Recipe copied to clipboard for sharing!'),
         backgroundColor: AppConstants.primaryColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(

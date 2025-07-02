@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
@@ -46,14 +47,14 @@ class RecipeCard extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                AutoSizeText(
                                   recipe.title,
                                   style: AppConstants.titleStyle,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
-                                Text(
+                                AutoSizeText(
                                   recipe.description,
                                   style: AppConstants.captionStyle,
                                   maxLines: 2,
@@ -73,7 +74,7 @@ class RecipeCard extends StatelessWidget {
                                 AppConstants.borderRadiusSmall,
                               ),
                             ),
-                            child: Text(
+                            child: AutoSizeText(
                               recipe.difficulty,
                               style: AppConstants.captionStyle.copyWith(
                                 color: Colors.white,
@@ -113,7 +114,7 @@ class RecipeCard extends StatelessWidget {
                                   AppConstants.borderRadiusSmall,
                                 ),
                               ),
-                              child: Text(
+                              child: AutoSizeText(
                                 tag,
                                 style: AppConstants.captionStyle.copyWith(
                                   fontSize: 12,
@@ -144,7 +145,7 @@ class RecipeCard extends StatelessWidget {
           color: AppConstants.textSecondary,
         ),
         const SizedBox(width: 4),
-        Text(
+        AutoSizeText(
           label,
           style: AppConstants.captionStyle.copyWith(fontSize: 12),
         ),
