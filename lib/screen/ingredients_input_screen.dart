@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -85,7 +86,7 @@ class _IngredientsInputScreenState extends State<IngredientsInputScreen> {
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
       appBar: AppBar(
-        title: Text(
+        title: AutoSizeText(
           AppStrings.myIngredients,
           style: AppConstants.titleStyle.copyWith(color: Colors.white),
         ),
@@ -97,7 +98,7 @@ class _IngredientsInputScreenState extends State<IngredientsInputScreen> {
             onPressed: _ingredients.isNotEmpty
                 ? () => Navigator.pop(context, _ingredients)
                 : null,
-            child: Text(
+            child: AutoSizeText(
               'Done',
               style: AppConstants.bodyStyle.copyWith(
                 color: _ingredients.isNotEmpty ? Colors.white : Colors.white54,
@@ -144,7 +145,7 @@ class _IngredientsInputScreenState extends State<IngredientsInputScreen> {
                 ),
                 if (_ingredients.isNotEmpty) ...[
                   const SizedBox(height: AppConstants.paddingMedium),
-                  Text(
+                  AutoSizeText(
                     'Your Ingredients (${_ingredients.length})',
                     style: AppConstants.titleStyle.copyWith(fontSize: 16),
                   ),
@@ -169,7 +170,7 @@ class _IngredientsInputScreenState extends State<IngredientsInputScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AutoSizeText(
                     'Popular Ingredients',
                     style: AppConstants.titleStyle.copyWith(fontSize: 16),
                   ),
@@ -217,7 +218,7 @@ class _IngredientsInputScreenState extends State<IngredientsInputScreen> {
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
-                                    child: Text(
+                                    child: AutoSizeText(
                                       suggestion,
                                       style: AppConstants.captionStyle.copyWith(
                                         fontWeight: isAdded
