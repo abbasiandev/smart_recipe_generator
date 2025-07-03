@@ -21,6 +21,20 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
     on<LoadIngredientsEvent>(_onLoadIngredients);
     on<AddIngredientEvent>(_onAddIngredient);
     on<RemoveIngredientEvent>(_onRemoveIngredient);
+    on<ClearAllIngredientsEvent>(_onClearAllIngredients);
+  }
+
+  List<Ingredient> _getCurrentIngredients() {
+    if (state is IngredientLoaded) {
+      return (state as IngredientLoaded).ingredients;
+    } else if (state is IngredientOperationSuccess) {
+      return (state as IngredientOperationSuccess).ingredients;
+    } else if (state is IngredientValidationError) {
+      return (state as IngredientValidationError).ingredients;
+    } else if (state is IngredientError) {
+      return (state as IngredientError).ingredients;
+    }
+    return [];
   }
 
   Future<void> _onLoadIngredients(
@@ -32,7 +46,10 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
     final result = await getSavedIngredientsUseCase(NoParams());
 
     result.fold(
-          (failure) => emit(IngredientError(message: failure.message)),
+          (failure) => emit(IngredientError(
+        message: failure.message,
+        ingredients: [],
+      )),
           (ingredients) => emit(IngredientLoaded(ingredients: ingredients)),
     );
   }
@@ -41,54 +58,106 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
       AddIngredientEvent event,
       Emitter<IngredientState> emit,
       ) async {
-    if (state is IngredientLoaded) {
-      final currentState = state as IngredientLoaded;
-      emit(IngredientLoading());
+    List<Ingredient> currentIngredients = _getCurrentIngredients();
 
-      final result = await addIngredientUseCase(
-        AddIngredientParams(ingredient: event.ingredient),
-      );
-
-      result.fold(
-            (failure) => emit(IngredientError(message: failure.message)),
-            (_) {
-          final updatedIngredients = <Ingredient>[
-            ...currentState.ingredients,
-            event.ingredient,
-          ];
-          emit(IngredientOperationSuccess(
-            message: 'Ingredient added successfully',
-            ingredients: updatedIngredients,
-          ));
-        },
-      );
+    final ingredientName = event.ingredient.name.trim();
+    if (ingredientName.isEmpty) {
+      emit(IngredientValidationError(
+        message: 'Ingredient name cannot be empty',
+        ingredients: currentIngredients,
+      ));
+      return;
     }
+
+    final isDuplicate = currentIngredients.any((ingredient) =>
+    ingredient.name.toLowerCase() == ingredientName.toLowerCase());
+
+    if (isDuplicate) {
+      emit(IngredientValidationError(
+        message: '$ingredientName already exists',
+        ingredients: currentIngredients,
+      ));
+      return;
+    }
+
+    emit(IngredientLoading());
+
+    final result = await addIngredientUseCase(
+      AddIngredientParams(ingredient: event.ingredient),
+    );
+
+    result.fold(
+          (failure) {
+        emit(IngredientError(
+          message: failure.message,
+          ingredients: currentIngredients,
+        ));
+      },
+          (success) {
+        final updatedIngredients = [...currentIngredients, event.ingredient];
+        emit(IngredientOperationSuccess(
+          message: '$ingredientName added successfully',
+          ingredients: updatedIngredients,
+        ));
+      },
+    );
   }
 
   Future<void> _onRemoveIngredient(
       RemoveIngredientEvent event,
       Emitter<IngredientState> emit,
       ) async {
-    if (state is IngredientLoaded) {
-      final currentState = state as IngredientLoaded;
-      emit(IngredientLoading());
+    List<Ingredient> currentIngredients = _getCurrentIngredients();
 
-      final result = await removeIngredientUseCase(
-        RemoveIngredientParams(ingredient: event.ingredient),
-      );
-
-      result.fold(
-            (failure) => emit(IngredientError(message: failure.message)),
-            (_) {
-          final updatedIngredients = currentState.ingredients
-              .where((ingredient) => ingredient != event.ingredient)
-              .toList();
-          emit(IngredientOperationSuccess(
-            message: 'Ingredient removed successfully',
-            ingredients: updatedIngredients,
-          ));
-        },
-      );
+    if (currentIngredients.isEmpty) {
+      emit(IngredientValidationError(
+        message: 'No ingredients to remove',
+        ingredients: currentIngredients,
+      ));
+      return;
     }
+
+    final ingredientExists = currentIngredients.any(
+            (ingredient) => ingredient.name.toLowerCase() == event.ingredient.name.toLowerCase()
+    );
+
+    if (!ingredientExists) {
+      emit(IngredientValidationError(
+        message: '${event.ingredient.name} not found',
+        ingredients: currentIngredients,
+      ));
+      return;
+    }
+
+    emit(IngredientLoading());
+
+    final result = await removeIngredientUseCase(
+      RemoveIngredientParams(ingredient: event.ingredient),
+    );
+
+    result.fold(
+          (failure) {
+        emit(IngredientError(
+          message: failure.message,
+          ingredients: currentIngredients,
+        ));
+      },
+          (success) {
+        final updatedIngredients = currentIngredients
+            .where((ingredient) => ingredient != event.ingredient)
+            .toList();
+        emit(IngredientOperationSuccess(
+          message: '${event.ingredient.name} removed successfully',
+          ingredients: updatedIngredients,
+        ));
+      },
+    );
+  }
+
+  Future<void> _onClearAllIngredients(
+      ClearAllIngredientsEvent event,
+      Emitter<IngredientState> emit,
+      ) async {
+    emit(IngredientLoaded(ingredients: []));
   }
 }

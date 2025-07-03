@@ -24,11 +24,28 @@ class IngredientLoaded extends IngredientState {
 
 class IngredientError extends IngredientState {
   final String message;
+  final List<Ingredient> ingredients;
 
-  const IngredientError({required this.message});
+  const IngredientError({
+    required this.message,
+    required this.ingredients,
+  });
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, ingredients];
+}
+
+class IngredientValidationError extends IngredientState {
+  final String message;
+  final List<Ingredient> ingredients;
+
+  const IngredientValidationError({
+    required this.message,
+    required this.ingredients,
+  });
+
+  @override
+  List<Object> get props => [message, ingredients];
 }
 
 class IngredientOperationSuccess extends IngredientState {
