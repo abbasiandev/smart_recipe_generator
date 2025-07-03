@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'screen/home_screen.dart';
-import 'util/constants.dart';
+import 'core/constant/constants.dart';
+import 'core/di/dependency_injection.dart';
+import 'core/di/service_locator.dart';
+import 'presentation/bloc/ingredient/ingredient_bloc.dart';
+import 'presentation/bloc/recipe/recipe_bloc.dart';
+import 'presentation/page/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +19,9 @@ void main() async {
     print('No .env file found, using sample recipes');
   }
 
+  final di = DependencyInjection();
+  await di.init();
+
   runApp(const SmartRecipeGeneratorApp());
 }
 
@@ -22,59 +30,69 @@ class SmartRecipeGeneratorApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppStrings.appName,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppConstants.primaryColor,
-          brightness: Brightness.light,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<IngredientBloc>(
+          create: (context) => sl<IngredientBloc>(),
         ),
-        textTheme: GoogleFonts.interTextTheme(),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: AppConstants.primaryColor,
-          foregroundColor: Colors.white,
-          elevation: 0,
+        BlocProvider<RecipeBloc>(
+          create: (context) => sl<RecipeBloc>(),
         ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
+      ],
+      child: MaterialApp(
+        title: AppStrings.appName,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppConstants.primaryColor,
+            brightness: Brightness.light,
+          ),
+          textTheme: GoogleFonts.interTextTheme(),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: AppConstants.primaryColor,
+            foregroundColor: Colors.white,
+            elevation: 0,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              elevation: 2,
+              shadowColor: Colors.black26,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  AppConstants.borderRadiusMedium,
+                ),
+              ),
+            ),
+          ),
+          cardTheme: CardThemeData(
             elevation: 2,
-            shadowColor: Colors.black26,
+            shadowColor: Colors.black12,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(
                 AppConstants.borderRadiusMedium,
               ),
             ),
           ),
-        ),
-        cardTheme: CardThemeData(
-          elevation: 2,
-          shadowColor: Colors.black12,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              AppConstants.borderRadiusMedium,
+          inputDecorationTheme: InputDecorationTheme(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                AppConstants.borderRadiusMedium,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                AppConstants.borderRadiusMedium,
+              ),
+              borderSide: const BorderSide(
+                color: AppConstants.primaryColor,
+                width: 2,
+              ),
             ),
           ),
         ),
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(
-              AppConstants.borderRadiusMedium,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(
-              AppConstants.borderRadiusMedium,
-            ),
-            borderSide: const BorderSide(
-              color: AppConstants.primaryColor,
-              width: 2,
-            ),
-          ),
-        ),
+        home: const HomePage(),
       ),
-      home: const HomeScreen(),
     );
   }
 }
