@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../model/ingredient.dart';
-import '../util/constants.dart';
+import '../../core/constant/constants.dart';
+import '../../domain/entity/ingredient.dart';
 
 class IngredientChip extends StatelessWidget {
   final Ingredient ingredient;

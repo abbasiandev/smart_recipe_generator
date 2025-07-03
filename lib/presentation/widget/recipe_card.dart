@@ -2,8 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-import '../model/recipe.dart';
-import '../util/constants.dart';
+import '../../core/constant/constants.dart';
+import '../../domain/entity/recipe.dart';
 
 class RecipeCard extends StatelessWidget {
   final Recipe recipe;
