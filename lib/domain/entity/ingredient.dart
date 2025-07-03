@@ -1,11 +1,15 @@
-class Ingredient {
+import 'package:equatable/equatable.dart';
+
+class Ingredient extends Equatable {
   final String name;
   final String? quantity;
+  final String? category;
   final DateTime addedAt;
 
   Ingredient({
     required this.name,
     this.quantity,
+    this.category,
     DateTime? addedAt,
   }) : addedAt = addedAt ?? DateTime.now();
 
@@ -13,6 +17,7 @@ class Ingredient {
     return {
       'name': name,
       'quantity': quantity,
+      'category': category,
       'addedAt': addedAt.toIso8601String(),
     };
   }
@@ -21,18 +26,15 @@ class Ingredient {
     return Ingredient(
       name: json['name'],
       quantity: json['quantity'],
-      addedAt: DateTime.parse(json['addedAt']),
+      category: json['category'],
+      addedAt: json['addedAt'] != null
+          ? DateTime.parse(json['addedAt'])
+          : null,
     );
   }
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is Ingredient && other.name.toLowerCase() == name.toLowerCase();
-  }
-
-  @override
-  int get hashCode => name.toLowerCase().hashCode;
+  List<Object?> get props => [name.toLowerCase(), category];
 
   @override
   String toString() {

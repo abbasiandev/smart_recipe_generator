@@ -1,6 +1,7 @@
-import 'dart:ui';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
-class Recipe {
+class Recipe extends Equatable {
   final String title;
   final String description;
   final List<String> ingredients;
@@ -47,30 +48,45 @@ class Recipe {
       servings: json['servings'],
       difficulty: json['difficulty'],
       tags: List<String>.from(json['tags']),
-      generatedAt: DateTime.parse(json['generatedAt']),
+      generatedAt: json['generatedAt'] != null
+          ? DateTime.parse(json['generatedAt'])
+          : null,
     );
   }
 
   String get prepTimeFormatted {
     if (prepTimeMinutes < 60) {
-      return '${prepTimeMinutes}m';
+      return '${prepTimeMinutes}min';
     } else {
       final hours = prepTimeMinutes ~/ 60;
       final minutes = prepTimeMinutes % 60;
-      return minutes > 0 ? '${hours}h ${minutes}m' : '${hours}h';
+      return minutes > 0 ? '${hours}h ${minutes}min' : '${hours}h';
     }
   }
 
   Color get difficultyColor {
     switch (difficulty.toLowerCase()) {
       case 'easy':
-        return const Color(0xFF4CAF50);
+        return Colors.green;
       case 'medium':
-        return const Color(0xFFFF9800);
+        return Colors.orange;
       case 'hard':
-        return const Color(0xFFF44336);
+        return Colors.red;
       default:
-        return const Color(0xFF757575);
+        return Colors.grey;
     }
   }
+
+  @override
+  List<Object> get props => [
+    title,
+    description,
+    ingredients,
+    instructions,
+    prepTimeMinutes,
+    servings,
+    difficulty,
+    tags,
+    generatedAt,
+  ];
 }

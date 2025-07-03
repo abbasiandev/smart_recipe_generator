@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:smart_recipe_generator/model/ingredient.dart';
+import 'package:smart_recipe_generator/domain/entity/ingredient.dart';
 
 void main() {
   group('Ingredient Model Tests', () {
@@ -19,6 +19,13 @@ void main() {
       expect(ingredient.toString(), 'Salt');
     });
 
+    test('Ingredient with category works correctly', () {
+      final ingredient = Ingredient(name: 'Tomato', category: 'Vegetable');
+
+      expect(ingredient.name, 'Tomato');
+      expect(ingredient.category, 'Vegetable');
+    });
+
     test('Ingredient equality works correctly', () {
       final ingredient1 = Ingredient(name: 'Tomato');
       final ingredient2 = Ingredient(name: 'tomato');
@@ -29,12 +36,17 @@ void main() {
     });
 
     test('Ingredient JSON serialization works correctly', () {
-      final ingredient = Ingredient(name: 'Tomato', quantity: '2 pieces');
+      final ingredient = Ingredient(
+          name: 'Tomato',
+          quantity: '2 pieces',
+          category: 'Vegetable'
+      );
       final json = ingredient.toJson();
       final reconstructed = Ingredient.fromJson(json);
 
       expect(reconstructed.name, ingredient.name);
       expect(reconstructed.quantity, ingredient.quantity);
+      expect(reconstructed.category, ingredient.category);
     });
   });
 }
