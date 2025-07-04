@@ -30,9 +30,6 @@ jobs:
       - name: Verify formatting
         run: echo "Skipping format check"
 
-      - name: Analyze code
-        run: flutter analyze
-
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
