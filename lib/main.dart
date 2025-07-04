@@ -8,11 +8,10 @@ import 'core/di/dependency_injection.dart';
 import 'core/di/service_locator.dart';
 import 'presentation/bloc/ingredient/ingredient_bloc.dart';
 import 'presentation/bloc/recipe/recipe_bloc.dart';
-import 'presentation/page/home_page.dart';
+import 'presentation/bloc/splash/splash_bloc.dart';
+import 'presentation/page/splash_page.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
   try {
     await dotenv.load(fileName: ".env");
   } catch (e) {
@@ -32,6 +31,9 @@ class SmartRecipeGeneratorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<SplashBloc>(
+          create: (context) => SplashBloc(),
+        ),
         BlocProvider<IngredientBloc>(
           create: (context) => sl<IngredientBloc>(),
         ),
@@ -91,7 +93,7 @@ class SmartRecipeGeneratorApp extends StatelessWidget {
             ),
           ),
         ),
-        home: const HomePage(),
+        home: const SplashPage(),
       ),
     );
   }
