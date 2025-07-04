@@ -113,30 +113,37 @@ jobs:
           name: android-apk
           path: ./artifacts/
 
-      - name: Download Android Bundle
+      - name: Download iOS Build
         uses: actions/download-artifact@v4
         with:
-          name: android-bundle
+          name: ios-build
           path: ./artifacts/
 
-      - name: Get version from tag
-        id: get_version
-        run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      - name: Get version and SHA
+        id: get-info
+        run: |
+          echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "full-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          name: Smart Recipe Generator ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.get-info.outputs.version }}
+          name: Smart Recipe Generator ${{ steps.get-info.outputs.version }} (Build ${{ steps.get-info.outputs.sha }})
           draft: false
           prerelease: false
           generate_release_notes: true
           files: |
-            ./artifacts/app-release.apk
-            ./artifacts/app-release.aab
+            ./artifacts/*
           body: |
-            ## 🎉 What's New in ${{ steps.get_version.outputs.version }}
-
+            ## 🎉 Smart Recipe Generator ${{ steps.get-info.outputs.version }}
+            
+            **Build Information:**
+            - 🔨 Build SHA: `${{ steps.get-info.outputs.full-sha }}`
+            - 📅 Build Date: ${{ github.event.head_commit.timestamp }}
+            - 🚀 Triggered by: ${{ github.actor }}
+            
             ### ✨ New Features
             - Enhanced recipe generation algorithm
             - Improved ingredient recognition
@@ -147,16 +154,15 @@ jobs:
             - Resolved build configuration issues
             - Improved app stability
 
-            ### 🔧 Improvements
-            - Updated Flutter to latest version
-            - Optimized app performance
-            - Enhanced code quality
-
             ### 📱 Downloads
-            - **Android APK**: Direct installation file
-            - **Android Bundle**: For Google Play Store
+            - **Android APK**: `app-debug-${{ steps.get-info.outputs.sha }}.apk`
+            - **iOS Build**: Available in artifacts
 
-            ### 🔍 Full Changelog
-            **Full Changelog**: https://github.com/abbasiandev/smart_recipe_generator/compare/v1.0.0...${{ steps.get_version.outputs.version }}
+            ### 🔍 Technical Details
+            - **Commit**: [${{ steps.get-info.outputs.full-sha }}](https://github.com/${{ github.repository }}/commit/${{ steps.get-info.outputs.full-sha }})
+            - **Flutter Version**: ${{ env.FLUTTER_VERSION }}
+            - **Build Platform**: Ubuntu Latest
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v1.0.0...${{ steps.get-info.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
