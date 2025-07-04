@@ -32,6 +32,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
   bool _isFavorite = false;
   int _currentServings = 1;
 
+  static const double _expandedHeight = 250;
+  static const double _collapsedThreshold = 100;
+
   @override
   void initState() {
     super.initState();
@@ -86,101 +89,104 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
       pinned: true,
       backgroundColor: AppConstants.primaryColor,
       iconTheme: const IconThemeData(color: Colors.white),
-      flexibleSpace: FlexibleSpaceBar(
-        title: AutoSizeText(
-          widget.recipe.title,
-          style: AppConstants.titleStyle.copyWith(
-            color: Colors.white,
-            fontSize: 18,
-          ),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        background: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                AppConstants.primaryColor,
-                AppConstants.secondaryColor,
-              ],
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Opacity(
-                  opacity: 0.1,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/image/recipe_pattern.png'),
-                        repeat: ImageRepeat.repeat,
-                        opacity: 0.1,
+      flexibleSpace: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCollapsed = constraints.biggest.height <= _collapsedThreshold;
+
+          return FlexibleSpaceBar(
+            title: isCollapsed ? AutoSizeText(
+              widget.recipe.title,
+              style: AppConstants.titleStyle.copyWith(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ) : null, // Only show title when collapsed
+            background: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppConstants.primaryColor,
+                    AppConstants.secondaryColor,
+                  ],
+                ),
+              ),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/image/recipe_pattern.png'),
+                          repeat: ImageRepeat.repeat,
+                          opacity: 0.3,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.paddingMedium),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 80),
-                      AutoSizeText(
-                        widget.recipe.description,
-                        style: AppConstants.bodyStyle.copyWith(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHeaderInfo(
-                            Icons.access_time,
-                            widget.recipe.prepTimeFormatted,
+                          const SizedBox(height: 80),
+                          AutoSizeText(
+                            widget.recipe.description,
+                            style: AppConstants.bodyStyle.copyWith(
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(width: 20),
-                          _buildHeaderInfo(
-                            Icons.people,
-                            '$_currentServings servings',
-                          ),
-                          const SizedBox(width: 20),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: widget.recipe.difficultyColor,
-                              borderRadius: BorderRadius.circular(
-                                AppConstants.borderRadiusSmall,
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              _buildHeaderInfo(
+                                Icons.access_time,
+                                widget.recipe.prepTimeFormatted,
                               ),
-                            ),
-                            child: AutoSizeText(
-                              widget.recipe.difficulty,
-                              style: AppConstants.captionStyle.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                              const SizedBox(width: 20),
+                              _buildHeaderInfo(
+                                Icons.people,
+                                '$_currentServings servings',
                               ),
-                            ),
+                              const SizedBox(width: 20),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: widget.recipe.difficultyColor,
+                                  borderRadius: BorderRadius.circular(
+                                    AppConstants.borderRadiusSmall,
+                                  ),
+                                ),
+                                child: AutoSizeText(
+                                  widget.recipe.difficulty,
+                                  style: AppConstants.captionStyle.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
       actions: [
         ScaleTransition(
