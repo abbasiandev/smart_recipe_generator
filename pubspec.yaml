@@ -40,7 +40,7 @@ dependencies:
   auto_size_text: ^3.0.0
   flutter_bloc: ^8.1.6
   equatable: ^2.0.5
-  get_it: ^7.7.0
+  get_it: ^7.6.0
   injectable: ^2.4.4
   dartz: ^0.10.1
   material_design_icons_flutter: ^7.0.7296
