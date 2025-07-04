@@ -449,14 +449,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                       foregroundColor: AppConstants.primaryColor,
                     ),
                   ),
-                  TextButton.icon(
-                    onPressed: _createShoppingList,
-                    icon: const Icon(Icons.shopping_cart, size: 16),
-                    label: const AutoSizeText('Shop'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppConstants.secondaryColor,
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -798,10 +790,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
 
     Clipboard.setData(ClipboardData(text: ingredientsList));
     _showSnackBar('Ingredients copied to clipboard!', AppConstants.secondaryColor);
-  }
-
-  void _createShoppingList() {
-    _showSnackBar('Shopping list feature coming soon!', AppConstants.accentColor);
   }
 
   void _shareRecipe() {
