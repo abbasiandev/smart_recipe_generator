@@ -28,7 +28,18 @@ jobs:
         run: flutter pub get
 
       - name: Verify formatting
-        run: echo "Skipping format check"
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test --coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
 
   build-android:
     name: Build Android
@@ -48,22 +59,53 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --verbose
+
+      - name: Debug build output
+        run: |
+          echo "=== Looking for APK files ==="
+          find build -name "*.apk" -type f -exec ls -la {} \;
+          echo "=== Build directory structure ==="
+          ls -la build/app/outputs/ || echo "outputs directory not found"
+
+      - name: Find and copy APK
+        run: |
+          APK_PATH=$(find build -name "app-release.apk" -type f | head -1)
+          if [ -n "$APK_PATH" ]; then
+            echo "Found APK at: $APK_PATH"
+            mkdir -p artifacts
+            cp "$APK_PATH" artifacts/app-release.apk
+          else
+            echo "APK not found!"
+            exit 1
+          fi
 
       - name: Build App Bundle
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --verbose
+
+      - name: Find and copy AAB
+        run: |
+          AAB_PATH=$(find build -name "app-release.aab" -type f | head -1)
+          if [ -n "$AAB_PATH" ]; then
+            echo "Found AAB at: $AAB_PATH"
+            mkdir -p artifacts
+            cp "$AAB_PATH" artifacts/app-release.aab
+          else
+            echo "AAB not found!"
+            exit 1
+          fi
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: artifacts/app-release.apk
 
       - name: Upload App Bundle artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-bundle
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: artifacts/app-release.aab
 
   build-ios:
     name: Build iOS
@@ -131,16 +173,19 @@ jobs:
             ## 🎉 What's New in ${{ steps.get_version.outputs.version }}
 
             ### ✨ New Features
-            - Feature 1 description
-            - Feature 2 description
+            - Enhanced recipe generation algorithm
+            - Improved ingredient recognition
+            - Better user interface experience
 
             ### 🐛 Bug Fixes
-            - Fix 1 description
-            - Fix 2 description
+            - Fixed dependency conflicts
+            - Resolved build configuration issues
+            - Improved app stability
 
             ### 🔧 Improvements
-            - Improvement 1 description
-            - Improvement 2 description
+            - Updated Flutter to latest version
+            - Optimized app performance
+            - Enhanced code quality
 
             ### 📱 Downloads
             - **Android APK**: Direct installation file
@@ -148,6 +193,5 @@ jobs:
 
             ### 🔍 Full Changelog
             **Full Changelog**: https://github.com/abbasiandev/smart_recipe_generator/compare/v1.0.0...${{ steps.get_version.outputs.version }}
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
