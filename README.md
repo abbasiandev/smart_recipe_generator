@@ -1,7 +1,7 @@
 🍳 Smart Recipe Generator
 =========================
 
-</p> <p align="center"> <strong>An AI-powered Flutter app that generates personalized recipes based on your available ingredients</strong> </p> <p align="center"> <a href="https://github.com/abbasiandev/smart_recipe_generator/releases"><img src="https://img.shields.io/github/v/release/abbasiandev/smart_recipe_generator" alt="GitHub release"></a> <a href="https://github.com/abbasiandev/smart_recipe_generator/actions"><img src="https://img.shields.io/github/actions/workflow/status/abbasiandev/smart_recipe_generator/ci.yml" alt="CI Status"></a><a href="https://github.com/abbasiandev/smart_recipe_generator/blob/main/LICENSE"><img src="https://img.shields.io/github/license/abbasiandev/smart_recipe_generator" alt="License"></a> </p>
+[![Build Status](https://img.shields.io/github/actions/workflow/status/your-org/dailyquote/flutter-ci.yml?branch=main&style=flat-square)](https://github.com/your-org/dailyquote/actions) [![Flutter](https://img.shields.io/badge/Platform-Flutter-02569B?style=flat-square&logo=flutter)](https://flutter.dev/) [![Dart](https://img.shields.io/badge/Language-Dart-0175C2?style=flat-square&logo=dart)](https://dart.dev/) [![Architecture: BLoC](https://img.shields.io/badge/Architecture-BLoC-FF4081?style=flat-square&logo=bloc)](https://bloclibrary.dev/) [![iOS](https://img.shields.io/badge/Platform-iOS-000000?style=flat-square&logo=apple)](https://developer.apple.com/ios/) [![Android](https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android)](https://developer.android.com/)
 
 Perfect for discovering new meals with what you have at home! Never waste ingredients again and explore creative cooking possibilities powered by AI.
 
@@ -155,26 +155,3 @@ This app follows Clean Architecture principles with the following layers:
     ```
     flutter run
     ```
-
-### Building for Production
-
-**Android APK:**
-
-bash
-
-```
-flutter build apk --release
-```
-
-**iOS:**
-
-bash
-
-```
-flutter build ios --release
-```
-
-📄 License
-----------
-
-This project is licensed under the MIT License - see the <LICENSE> file for details.
