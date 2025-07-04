@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/constant/constants.dart';
+import '../../core/util/snackbar_util.dart';
 import '../../domain/entity/ingredient.dart';
 import '../bloc/ingredient/ingredient_bloc.dart';
 import '../bloc/ingredient/ingredient_event.dart';
@@ -110,59 +111,19 @@ class _IngredientsInputPageState extends State<IngredientsInputPage> {
           ),
         ],
       ),
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<IngredientBloc, IngredientState>(
-            listenWhen: (previous, current) {
-              return current is IngredientOperationSuccess;
-            },
-            listener: (context, state) {
-              if (state is IngredientOperationSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: Colors.green,
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-                Future.delayed(const Duration(milliseconds: 1100), () {
-                  if (mounted) {
-                    context.read<IngredientBloc>().add(LoadIngredientsEvent());
-                  }
-                });
-              }
-            },
-          ),
-          BlocListener<IngredientBloc, IngredientState>(
-            listenWhen: (previous, current) {
-              return current is IngredientError || current is IngredientValidationError;
-            },
-            listener: (context, state) {
-              if (state is IngredientError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: Colors.red,
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              } else if (state is IngredientValidationError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: Colors.orange,
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              }
-            },
-          ),
-        ],
+      body: BlocListener<IngredientBloc, IngredientState>(
+        listener: (context, state) {
+          if (state is IngredientError) {
+            SnackbarUtil.showError(context, state.message);
+          } else if (state is IngredientValidationError) {
+            SnackbarUtil.showWarning(context, state.message);
+          }
+        },
         child: BlocBuilder<IngredientBloc, IngredientState>(
           builder: (context, state) {
             List<Ingredient> ingredients = [];
             bool isLoading = false;
-
+        
             if (state is IngredientLoading) {
               isLoading = true;
               ingredients = _getCurrentIngredients();
@@ -175,7 +136,7 @@ class _IngredientsInputPageState extends State<IngredientsInputPage> {
             } else if (state is IngredientError) {
               ingredients = state.ingredients;
             }
-
+        
             return Column(
               children: [
                 Container(
@@ -265,7 +226,7 @@ class _IngredientsInputPageState extends State<IngredientsInputPage> {
                                     (ingredient) => ingredient.name.toLowerCase() ==
                                     suggestion.toLowerCase(),
                               );
-
+        
                               return Material(
                                 color: isAdded
                                     ? AppConstants.secondaryColor.withValues(alpha: 0.2)

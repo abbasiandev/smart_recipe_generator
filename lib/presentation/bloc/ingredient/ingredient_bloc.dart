@@ -95,10 +95,7 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
       },
           (success) {
         final updatedIngredients = [...currentIngredients, event.ingredient];
-        emit(IngredientOperationSuccess(
-          message: '$ingredientName added successfully',
-          ingredients: updatedIngredients,
-        ));
+        emit(IngredientLoaded(ingredients: updatedIngredients));
       },
     );
   }
@@ -146,10 +143,7 @@ class IngredientBloc extends Bloc<IngredientEvent, IngredientState> {
         final updatedIngredients = currentIngredients
             .where((ingredient) => ingredient != event.ingredient)
             .toList();
-        emit(IngredientOperationSuccess(
-          message: '${event.ingredient.name} removed successfully',
-          ingredients: updatedIngredients,
-        ));
+        emit(IngredientLoaded(ingredients: updatedIngredients));
       },
     );
   }

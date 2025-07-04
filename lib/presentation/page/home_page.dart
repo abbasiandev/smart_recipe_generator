@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/constant/constants.dart';
+import '../../core/util/snackbar_util.dart';
 import '../../domain/entity/ingredient.dart';
 import '../../domain/entity/recipe.dart';
 import '../bloc/ingredient/ingredient_bloc.dart';
@@ -190,19 +191,9 @@ class _HomePageState extends State<HomePage> {
     return BlocConsumer<IngredientBloc, IngredientState>(
       listener: (context, state) {
         if (state is IngredientError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
-          );
-        } else if (state is IngredientOperationSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.green,
-            ),
-          );
+          SnackbarUtil.showError(context, state.message);
+        } else if (state is IngredientValidationError) {
+          SnackbarUtil.showWarning(context, state.message);
         }
       },
       builder: (context, state) {
@@ -393,19 +384,9 @@ class _HomePageState extends State<HomePage> {
     return BlocConsumer<RecipeBloc, RecipeState>(
       listener: (context, state) {
         if (state is RecipeError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
-          );
+          SnackbarUtil.showError(context, state.message);
         } else if (state is RecipeLoaded && state.statusMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.statusMessage!),
-              backgroundColor: Colors.blue,
-            ),
-          );
+          SnackbarUtil.showInfo(context, state.statusMessage!);
         }
       },
       builder: (context, state) {
@@ -474,12 +455,7 @@ class _HomePageState extends State<HomePage> {
 
   void _generateRecipes(List<Ingredient> ingredients, bool isUsingAI) {
     if (ingredients.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please add some ingredients first!'),
-          backgroundColor: Colors.orange,
-        ),
-      );
+      SnackbarUtil.showWarning(context, 'Please add some ingredients first!');
       return;
     }
 

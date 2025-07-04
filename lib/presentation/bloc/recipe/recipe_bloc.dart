@@ -27,17 +27,16 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       Emitter<RecipeState> emit,
       ) async {
     emit(RecipeLoading());
-
     final result = await generateRecipesUseCase(
       GenerateRecipesParams(ingredients: event.ingredients),
     );
 
-    result.fold(
+    // Fixed: Properly await nested async operations
+    await result.fold(
           (failure) async {
         final sampleResult = await getSampleRecipesUseCase(
           GetSampleRecipesParams(ingredients: event.ingredients),
         );
-
         sampleResult.fold(
               (sampleFailure) => emit(RecipeError(message: failure.message)),
               (sampleRecipes) => emit(RecipeLoaded(
@@ -47,10 +46,12 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
           )),
         );
       },
-          (recipes) => emit(RecipeLoaded(
-        recipes: recipes,
-        isUsingAI: true,
-      )),
+          (recipes) async {
+        emit(RecipeLoaded(
+          recipes: recipes,
+          isUsingAI: true,
+        ));
+      },
     );
   }
 
@@ -59,14 +60,14 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       Emitter<RecipeState> emit,
       ) async {
     emit(RecipeLoading());
-
     final result = await getSampleRecipesUseCase(
       GetSampleRecipesParams(ingredients: event.ingredients),
     );
 
-    result.fold(
-          (failure) => emit(RecipeError(message: failure.message)),
-          (recipes) => emit(RecipeLoaded(
+    // Fixed: Make fold async and await it
+    await result.fold(
+          (failure) async => emit(RecipeError(message: failure.message)),
+          (recipes) async => emit(RecipeLoaded(
         recipes: recipes,
         isUsingAI: false,
       )),
@@ -79,9 +80,10 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       ) async {
     final result = await testApiConnectionUseCase(NoParams());
 
-    result.fold(
-          (failure) => emit(ApiConnectionState(isConnected: false)),
-          (isConnected) => emit(ApiConnectionState(isConnected: isConnected)),
+    // Fixed: Make fold async and await it
+    await result.fold(
+          (failure) async => emit(ApiConnectionState(isConnected: false)),
+          (isConnected) async => emit(ApiConnectionState(isConnected: isConnected)),
     );
   }
 }
