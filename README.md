@@ -8,7 +8,22 @@ Perfect for discovering new meals with what you have at home! Never waste ingred
 📸 Screenshots
 --------------
 
-<p align="center"> <img src="screenshots/home_screen.png" alt="Home Screen" width="200"/> <img src="screenshots/ingredients_screen.png" alt="Ingredients Screen" width="200"/> <img src="screenshots/recipe_details.png" alt="Recipe Details" width="200"/> <img src="screenshots/generated_recipe.png" alt="Generated Recipe" width="200"/> </p>
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="assets/image/splash.png" alt="splash" width="200" height="200" />
+    </td>
+    <td align="center">
+      <img src="assets/image/home.png" alt="home" width="200" height="200" />
+    </td>
+    <td align="center">
+      <img src="assets/image/ingredient.png" alt="ingredient" width="200" height="200" />
+    </td>
+    <td align="center">
+      <img src="assets/image/recipe.gif" alt="Recipe Details" width="200" height="200" style="object-fit: cover;" />
+    </td>
+  </tr>
+</table>
 
 ✨ Features
 ----------
