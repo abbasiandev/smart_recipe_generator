@@ -30,40 +30,41 @@ jobs:
       - name: Verify formatting
         run: echo "Skipping format check"
 
-build-android:
-  name: Build Android APK
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        cache: true
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
 
-    - name: Get dependencies
-      run: flutter pub get
+      - name: Get dependencies
+        run: flutter pub get
 
-    - name: Build APK
-      run: |
-        flutter build apk --debug
-        echo "=== APK Location ==="
-        find build -name "*.apk" -type f -exec ls -la {} \;
+      - name: Build APK
+        run: |
+          flutter build apk --debug
+          echo "=== APK Location ==="
+          find build -name "*.apk" -type f -exec ls -la {} \;
 
-    - name: Copy APK to artifacts
-      run: |
-        mkdir -p artifacts
-        cp build/app/outputs/flutter-apk/app-debug.apk artifacts/ || \
-        cp build/app/outputs/apk/debug/app-debug.apk artifacts/ || \
-        cp $(find build -name "*.apk" -type f | head -1) artifacts/app-debug.apk
+      - name: Copy APK to artifacts
+        run: |
+          mkdir -p artifacts
+          cp build/app/outputs/flutter-apk/app-debug.apk artifacts/ || \
+          cp build/app/outputs/apk/debug/app-debug.apk artifacts/ || \
+          cp $(find build -name "*.apk" -type f | head -1) artifacts/app-debug.apk
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: android-apk
-        path: artifacts/app-debug.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: artifacts/app-debug.apk
 
   build-ios:
     name: Build iOS
