@@ -47,18 +47,24 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build APK
+      - name: Build with Gradle directly
         run: |
-          flutter build apk --debug
-          echo "=== APK Location ==="
-          find build -name "*.apk" -type f -exec ls -la {} \;
+          cd android
+          ./gradlew assembleDebug
+          echo "=== Gradle build completed ==="
+          find . -name "*.apk" -type f -exec ls -la {} \;
 
       - name: Copy APK to artifacts
         run: |
           mkdir -p artifacts
-          cp build/app/outputs/flutter-apk/app-debug.apk artifacts/ || \
-          cp build/app/outputs/apk/debug/app-debug.apk artifacts/ || \
-          cp $(find build -name "*.apk" -type f | head -1) artifacts/app-debug.apk
+          APK_FILE=$(find android -name "*.apk" -type f | head -1)
+          if [ -n "$APK_FILE" ]; then
+            cp "$APK_FILE" artifacts/app-debug.apk
+            echo "APK copied from: $APK_FILE"
+          else
+            echo "No APK found!"
+            exit 1
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
