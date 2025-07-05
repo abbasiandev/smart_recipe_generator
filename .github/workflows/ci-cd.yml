@@ -47,9 +47,9 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Build APK (ignore Flutter's error)
+      - name: Build Release APK
         run: |
-          flutter build apk --debug || echo "Flutter build completed with warnings"
+          flutter build apk --release || echo "Flutter build completed with warnings"
           echo "=== Searching for APK files ==="
           find . -name "*.apk" -type f -exec ls -la {} \;
 
@@ -57,13 +57,18 @@ jobs:
         id: apk-info
         run: |
           mkdir -p artifacts
-          APK_FILE=$(find . -name "*.apk" -type f | head -1)
+          # Look for release APK first, then fallback to debug
+          APK_FILE=$(find . -name "app-release.apk" -type f | head -1)
+          if [ -z "$APK_FILE" ]; then
+            APK_FILE=$(find . -name "*.apk" -type f | head -1)
+          fi
+          
           if [ -n "$APK_FILE" ]; then
-            cp "$APK_FILE" artifacts/app-debug.apk
+            cp "$APK_FILE" artifacts/app-release.apk
             echo "APK found and copied: $APK_FILE"
             ls -la artifacts/
             # Calculate SHA256
-            SHA256=$(sha256sum artifacts/app-debug.apk | cut -d ' ' -f 1)
+            SHA256=$(sha256sum artifacts/app-release.apk | cut -d ' ' -f 1)
             echo "sha256=$SHA256" >> $GITHUB_OUTPUT
             echo "short_sha=${SHA256:0:8}" >> $GITHUB_OUTPUT
             echo "APK SHA256: $SHA256"
@@ -76,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: artifacts/app-debug.apk
+          path: artifacts/app-release.apk
 
   build-ios:
     name: Build iOS
@@ -95,14 +100,38 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build iOS
+      - name: Build iOS Release
         run: flutter build ios --release --no-codesign
+
+      - name: Create iOS Archive
+        run: |
+          mkdir -p artifacts/ios
+          # Copy the built iOS app
+          if [ -d "build/ios/iphoneos/Runner.app" ]; then
+            cp -r build/ios/iphoneos/Runner.app artifacts/ios/
+            echo "iOS app copied successfully"
+          else
+            echo "iOS app not found, checking available files:"
+            find build/ios -name "*.app" -type d
+          fi
+          
+          # Create a zip archive of the iOS build
+          cd artifacts/ios
+          if [ -d "Runner.app" ]; then
+            zip -r ../ios-release.zip Runner.app
+            cd ../..
+            echo "iOS release archive created"
+            ls -la artifacts/
+          else
+            cd ../..
+            echo "No iOS app found to archive"
+          fi
 
       - name: Upload iOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-build
-          path: build/ios/iphoneos/
+          path: artifacts/ios-release.zip
 
   create-release:
     name: Create Release with SHA256 Tag
@@ -135,7 +164,7 @@ jobs:
         id: get-info
         run: |
           # Calculate SHA256 of the APK
-          SHA256=$(sha256sum ./artifacts/app-debug.apk | cut -d ' ' -f 1)
+          SHA256=$(sha256sum ./artifacts/app-release.apk | cut -d ' ' -f 1)
           SHORT_SHA=${SHA256:0:8}
           
           # Get current version (you can modify this logic)
@@ -152,9 +181,12 @@ jobs:
           echo "Generated tag: $TAG_NAME"
           echo "APK SHA256: $SHA256"
 
-      - name: Rename APK with SHA256
+      - name: Rename files with SHA256
         run: |
-          mv ./artifacts/app-debug.apk ./artifacts/app-debug-${{ steps.get-info.outputs.short_sha }}.apk
+          mv ./artifacts/app-release.apk ./artifacts/app-release-${{ steps.get-info.outputs.short_sha }}.apk
+          if [ -f "./artifacts/ios-release.zip" ]; then
+            mv ./artifacts/ios-release.zip ./artifacts/ios-release-${{ steps.get-info.outputs.short_sha }}.zip
+          fi
           ls -la ./artifacts/
 
       - name: Create Release
@@ -188,8 +220,8 @@ jobs:
             - Improved app stability
 
             ### 📱 Downloads
-            - **Android APK**: `app-debug-${{ steps.get-info.outputs.short_sha }}.apk`
-            - **iOS Build**: Available in artifacts
+            - **Android APK**: `app-release-${{ steps.get-info.outputs.short_sha }}.apk`
+            - **iOS Archive**: `ios-release-${{ steps.get-info.outputs.short_sha }}.zip`
 
             ### 🔍 Technical Details
             - **Git Commit**: [${{ steps.get-info.outputs.full_git_sha }}](https://github.com/${{ github.repository }}/commit/${{ steps.get-info.outputs.full_git_sha }})
@@ -200,7 +232,7 @@ jobs:
             ### 🔐 File Verification
             To verify the APK integrity, run:
             ```bash
-            echo "${{ steps.get-info.outputs.sha256 }} app-debug-${{ steps.get-info.outputs.short_sha }}.apk" | sha256sum -c
+            echo "${{ steps.get-info.outputs.sha256 }} app-release-${{ steps.get-info.outputs.short_sha }}.apk" | sha256sum -c
             ```
 
             **Full Changelog**: https://github.com/${{ github.repository }}/compare/v1.0.0...${{ steps.get-info.outputs.tag_name }}
@@ -238,7 +270,7 @@ jobs:
           echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "full-sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
           # Calculate APK SHA256
-          SHA256=$(sha256sum ./artifacts/app-debug.apk | cut -d ' ' -f 1)
+          SHA256=$(sha256sum ./artifacts/app-release.apk | cut -d ' ' -f 1)
           echo "apk_sha256=$SHA256" >> $GITHUB_OUTPUT
 
       - name: Create Release
@@ -261,8 +293,8 @@ jobs:
             - 🚀 Triggered by: ${{ github.actor }}
             
             ### 📱 Downloads
-            - **Android APK**: `app-debug.apk`
-            - **iOS Build**: Available in artifacts
+            - **Android APK**: `app-release.apk`
+            - **iOS Archive**: `ios-release.zip`
 
             ### 🔍 Technical Details
             - **Commit**: [${{ steps.get-info.outputs.full-sha }}](https://github.com/${{ github.repository }}/commit/${{ steps.get-info.outputs.full-sha }})
