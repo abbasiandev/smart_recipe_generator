@@ -95,7 +95,7 @@ This app follows Clean Architecture principles with the following layers:
                               └──────────────┘
 ```
 
-**BLoC vs Other State Management Solutions:**
+-   **BLoC vs Other State Management Solutions:**
 
 | Feature | BLoC | Provider | Riverpod | GetX |
 | --- | --- | --- | --- | --- |
