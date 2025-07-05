@@ -72,12 +72,12 @@ This app follows Clean Architecture principles with the following layers:
 
 **Key Benefits:**
 
--   ✅ **Predictable State Management**: Every state change is traceable and testable
--   ✅ **Separation of Concerns**: UI components only handle presentation, business logic stays in BLoC
--   ✅ **Reactive Programming**: Automatic UI updates when data changes
--   ✅ **Testability**: Easy to unit test business logic without UI dependencies
--   ✅ **Scalability**: Clear structure that grows well with app complexity
--   ✅ **Reusability**: BLoCs can be shared across multiple UI components
+✅ **Predictable State Management**: Every state change is traceable and testable  
+✅ **Separation of Concerns**: UI components only handle presentation, business logic stays in BLoC  
+✅ **Reactive Programming**: Automatic UI updates when data changes  
+✅ **Testability**: Easy to unit test business logic without UI dependencies  
+✅ **Scalability**: Clear structure that grows well with app complexity  
+✅ **Reusability**: BLoCs can be shared across multiple UI components
 
 -   **BLoC Flow in Our App:**
 
