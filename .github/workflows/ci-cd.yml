@@ -47,6 +47,17 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE }}" | base64 -d > android/keystore.jks
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=keystore.jks" >> android/key.properties
+
       - name: Build Release APK
         run: |
           flutter build apk --release || echo "Flutter build completed with warnings"
@@ -208,16 +219,6 @@ jobs:
             - 🏷️ Build Tag: `${{ steps.get-info.outputs.tag_name }}`
             - 📅 Build Date: ${{ github.event.head_commit.timestamp }}
             - 🚀 Triggered by: ${{ github.actor }}
-            
-            ### ✨ New Features
-            - Enhanced recipe generation algorithm
-            - Improved ingredient recognition
-            - Better user interface experience
-
-            ### 🐛 Bug Fixes
-            - Fixed dependency conflicts
-            - Resolved build configuration issues
-            - Improved app stability
 
             ### 📱 Downloads
             - **Android APK**: `app-release-${{ steps.get-info.outputs.short_sha }}.apk`
